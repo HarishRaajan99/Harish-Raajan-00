@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harish Raajan · Boarding Pass</title>
+<meta name="description" content="Portfolio of Harish Raajan, first-year B.Tech IT student.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ===== COLOURS: change these three and everything follows ===== */
+:root{
+  --paper:#efe6d2;      /* page */
+  --paper2:#f8f2e4;     /* ticket stock */
+  --ink:#1e2b26;        /* text + dark panels */
+  --stamp:#cf4529;      /* stamp red */
+  --line:rgba(30,43,38,.28);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --head:'Bebas Neue',Impact,'Arial Narrow',sans-serif;
+  --mono:'Courier Prime','Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:56px}
+body{background:var(--paper);color:var(--ink);font-family:var(--mono);font-size:16px;line-height:1.65;overflow-x:hidden;
+  background-image:radial-gradient(rgba(30,43,38,.07) 1px,transparent 1.2px);background-size:7px 7px}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--stamp);outline-offset:3px}
+.wrap{width:min(1080px,100% - 32px);margin-inline:auto}
+h1,h2,h3{font-family:var(--head);font-weight:400;line-height:.9;letter-spacing:.01em}
+.label{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;opacity:.65}
+
+/* ===== OPENING: typewriter ===== */
+#open{position:fixed;inset:0;z-index:100;background:var(--ink);color:var(--paper);display:grid;place-items:center;padding:24px;transition:opacity .5s var(--ease)}
+#open.out{opacity:0;pointer-events:none}
+#open p{font-size:clamp(1.05rem,4.6vw,1.9rem);letter-spacing:.04em;text-align:center}
+#open .caret{display:inline-block;width:.6ch;height:1.05em;background:var(--stamp);vertical-align:-.15em;margin-left:2px;animation:blink .5s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+#skip{position:absolute;right:16px;bottom:16px;background:none;border:1px solid var(--paper);color:var(--paper);padding:6px 14px;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase}
+#skip:hover{background:var(--paper);color:var(--ink)}
+
+/* ===== NAV: gate strip ===== */
+nav{position:sticky;top:0;z-index:20;background:var(--ink);color:var(--paper)}
+nav .wrap{display:flex;gap:4px;overflow-x:auto;align-items:center;scrollbar-width:none}
+nav .wrap::-webkit-scrollbar{display:none}
+nav b{font-family:var(--head);font-weight:400;font-size:1.35rem;letter-spacing:.06em;padding:8px 14px 6px 0;margin-right:auto;white-space:nowrap}
+nav a{text-decoration:none;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;padding:14px 10px;white-space:nowrap;position:relative}
+nav a span{color:var(--stamp);margin-right:4px}
+nav a::after{content:"";position:absolute;left:10px;right:10px;bottom:8px;height:2px;background:var(--paper);transform:scaleX(0);transform-origin:left;transition:transform .3s var(--ease)}
+nav a:hover::after{transform:scaleX(1)}
+
+/* ===== SHARED TICKET BITS ===== */
+.ticket{position:relative;background:var(--paper2);border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink)}
+.barcode{height:44px;background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 5px,var(--ink) 5px 6px,transparent 6px 9px,var(--ink) 9px 12px,transparent 12px 14px,var(--ink) 14px 15px,transparent 15px 19px)}
+.stamp{display:inline-block;font-family:var(--head);color:var(--stamp);border:3px double var(--stamp);padding:6px 14px 3px;font-size:1.25rem;letter-spacing:.12em;transform:rotate(-4deg);opacity:.9;mix-blend-mode:multiply}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.stamp.rv{transform:scale(1.7) rotate(-14deg)}
+.stamp.rv.in{transform:rotate(-4deg);transition:opacity .25s,transform .35s cubic-bezier(.3,1.6,.5,1)}
+section{padding:72px 0 8px}
+.sec-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:32px}
+.sec-head h2{font-size:clamp(3.2rem,13vw,7rem)}
+
+/* ===== LANDING ===== */
+.hero{padding:36px 0 24px}
+.pass{display:grid;grid-template-columns:1fr}
+.pass-main{padding:22px 20px 26px}
+.pass-top{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:18px;font-family:var(--head);font-size:1.3rem;letter-spacing:.14em}
+.pass-top i{font-style:normal;color:var(--stamp)}
+.name{font-size:clamp(4.4rem,24vw,12.5rem);line-height:.82;margin:6px 0 18px}
+.name span{display:block}
+.name span:last-child{color:var(--stamp);margin-left:.5ch}
+.tagline{font-size:clamp(1.05rem,3.4vw,1.35rem);max-width:30ch;font-style:italic;margin-bottom:14px}
+.now{display:flex;gap:10px;align-items:baseline;font-size:.9rem;margin-bottom:24px}
+.now b{background:var(--ink);color:var(--paper);padding:1px 8px;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;text-decoration:none;font-family:var(--head);font-size:1.4rem;letter-spacing:.1em;padding:10px 24px 6px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
+.btn.alt{background:transparent;color:var(--ink)}
+.btn:hover{transform:translate(-3px,-3px);box-shadow:4px 4px 0 var(--stamp)}
+.btn:active{transform:none;box-shadow:none}
+.pass-stub{position:relative;border-top:2px dashed var(--ink);padding:20px;display:grid;gap:14px;align-content:space-between}
+.pass-stub::before,.pass-stub::after{content:"";position:absolute;top:-14px;width:26px;height:26px;border-radius:50%;background:var(--paper);border:2px solid var(--ink)}
+.pass-stub::before{left:-15px;clip-path:inset(0 0 0 50%)}
+.pass-stub::after{right:-15px;clip-path:inset(0 50% 0 0)}
+.mono-btn{background:none;border:0;justify-self:start;width:150px;height:150px;transition:transform .4s var(--ease)}
+.mono-btn:hover{transform:rotate(-8deg) scale(1.04)}
+.mono-btn svg{width:100%;height:100%;display:block}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.fields div{font-family:var(--head);font-size:1.7rem;line-height:1}
+.fields .label{font-family:var(--mono);display:block;margin-bottom:2px}
+@media(min-width:760px){
+  .pass{grid-template-columns:1fr 250px}
+  .pass-main{padding:34px 40px 40px}
+  .pass-stub{border-top:0;border-left:2px dashed var(--ink)}
+  .pass-stub::before{left:-15px;right:auto;top:-15px;clip-path:inset(50% 0 0 0)}
+  .pass-stub::after{left:-15px;right:auto;top:auto;bottom:-15px;clip-path:inset(0 0 50% 0)}
+}
+
+/* ===== ABOUT ===== */
+.about{display:grid;gap:28px}
+.about p{max-width:56ch;margin-bottom:1em}
+.about p:first-child::first-letter{font-family:var(--head);font-size:4.6rem;float:left;line-height:.75;padding:6px 10px 0 0;color:var(--stamp)}
+.passport{padding:20px;transform:rotate(1.5deg);align-self:start;max-width:340px}
+.passport dl{display:grid;gap:10px;margin-top:10px}
+.passport dt{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;opacity:.6}
+.passport dd{font-family:var(--head);font-size:1.6rem;line-height:1;border-bottom:1px dotted var(--ink);padding-bottom:4px}
+@media(min-width:800px){.about{grid-template-columns:1.5fr 1fr;gap:56px;margin-left:6%}}
+
+/* ===== SKILLS: departures board ===== */
+.board{background:var(--ink);color:var(--paper);padding:10px 18px 18px;box-shadow:6px 6px 0 var(--stamp)}
+.board header,.row{display:grid;grid-template-columns:1.1fr 1fr;gap:12px;align-items:center}
+.board header{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;opacity:.6;padding:8px 0;border-bottom:1px solid rgba(239,230,210,.35)}
+.row{padding:12px 0;border-bottom:1px solid rgba(239,230,210,.18);font-family:var(--head);font-size:clamp(1.6rem,6vw,2.3rem);letter-spacing:.06em;line-height:1}
+.row small{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;display:inline-flex;gap:8px;align-items:center}
+.row small::before{content:"";width:10px;height:10px;border:2px solid var(--paper);flex:none}
+.row.c small::before{background:var(--paper)}
+.row.l small::before{background:linear-gradient(90deg,var(--stamp) 50%,transparent 50%);border-color:var(--stamp)}
+.row.l small{color:#f0a08c}
+.row.j small{color:#c9c2ad}
+.row .flip{display:inline-block;animation:none}
+.in .row{animation:rowin .5s var(--ease) backwards}
+.in .row:nth-child(3){animation-delay:.1s}.in .row:nth-child(4){animation-delay:.2s}.in .row:nth-child(5){animation-delay:.3s}.in .row:nth-child(6){animation-delay:.4s}
+@keyframes rowin{from{opacity:0;transform:translateY(-10px) scaleY(.4)}}
+.note{margin-top:14px;font-size:.85rem;font-style:italic;max-width:50ch}
+
+/* ===== JOURNEY ===== */
+.legs{display:grid;gap:30px}
+.leg{padding:22px 22px 24px}
+.leg h3{font-size:2.4rem;margin:10px 0 8px}
+.leg .tag{display:flex;justify-content:space-between;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase}
+.leg p{max-width:36ch}
+.leg.a{transform:rotate(-1deg)}
+.leg.b{background:var(--ink);color:var(--paper);box-shadow:6px 6px 0 var(--stamp);transform:rotate(.8deg)}
+.leg.c{border-style:dashed;box-shadow:none;background:transparent}
+.leg.a .stamp{position:absolute;right:14px;top:-18px;background:var(--paper2)}
+.route{height:2px;margin:14px 0 0;background:repeating-linear-gradient(90deg,currentColor 0 8px,transparent 8px 14px);opacity:.5}
+@media(min-width:860px){
+  .legs{grid-template-columns:1fr 1.15fr 1fr;align-items:start}
+  .leg.b{margin-top:40px}.leg.c{margin-top:14px}
+}
+
+/* ===== BEYOND CODE: flip cards (signature) ===== */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fc{perspective:900px;background:none;border:0;text-align:left;min-height:210px;display:block;width:100%}
+.fc .in2{position:relative;width:100%;height:100%;min-height:210px;transform-style:preserve-3d;transition:transform .7s var(--ease)}
+.fc[aria-pressed="true"] .in2{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;padding:16px;border:2px solid var(--ink);display:flex;flex-direction:column;justify-content:space-between;background:var(--paper2);box-shadow:5px 5px 0 var(--ink)}
+.face.back{transform:rotateY(180deg);background:var(--ink);color:var(--paper);box-shadow:5px 5px 0 var(--stamp)}
+.face h3{font-size:clamp(1.9rem,7vw,2.8rem)}
+.face .label{display:flex;justify-content:space-between}
+.face p{font-size:.88rem;line-height:1.5}
+.fc:nth-child(2){margin-top:18px}.fc:nth-child(4){margin-top:18px}
+.fc:nth-child(1){transform:rotate(-1.2deg)}.fc:nth-child(3){transform:rotate(1deg)}
+.fc:hover .in2{transform:rotateY(-8deg)}
+.fc[aria-pressed="true"]:hover .in2{transform:rotateY(172deg)}
+@media(min-width:800px){.cards{grid-template-columns:repeat(4,1fr);gap:22px}.fc:nth-child(3){margin-top:18px}.fc:nth-child(4){margin-top:0}.fc:nth-child(2){margin-top:28px}}
+
+/* ===== CONTACT ===== */
+.desk{padding:26px 22px;display:grid;gap:24px}
+.desk h3{font-size:clamp(2.6rem,10vw,5rem)}
+.links{display:grid;gap:0}
+.links a{display:flex;justify-content:space-between;align-items:baseline;gap:12px;text-decoration:none;font-family:var(--head);font-size:clamp(1.6rem,6vw,2.2rem);letter-spacing:.05em;padding:12px 0;border-bottom:1px solid var(--line);transition:padding .3s var(--ease),color .2s}
+.links a span{font-family:var(--mono);font-size:.78rem;letter-spacing:0;word-break:break-all;text-align:right}
+.links a:hover{padding-left:12px;color:var(--stamp)}
+@media(min-width:800px){.desk{grid-template-columns:1fr 1.2fr;align-items:center;padding:40px}}
+footer{padding:48px 0 40px;text-align:center;font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;opacity:.7}
+
+/* ===== EASTER EGG ===== */
+#egg{position:fixed;inset:0;z-index:90;display:grid;place-items:center;pointer-events:none;opacity:0}
+#egg .stamp{font-size:clamp(2.6rem,12vw,6rem);background:rgba(239,230,210,.92);padding:14px 28px 8px;text-align:center;line-height:1}
+#egg small{display:block;font-family:var(--mono);font-size:.8rem;letter-spacing:.14em;margin-top:8px}
+#egg.go{animation:eggs 2.6s var(--ease)}
+@keyframes eggs{0%{opacity:0;transform:scale(2) rotate(-18deg)}12%{opacity:1;transform:scale(1) rotate(-6deg)}80%{opacity:1}100%{opacity:0}}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .rv{opacity:1;transform:none}
+  .stamp.rv{transform:rotate(-4deg)}
+}
+</style>
+</head>
+<body>
+
+<div id="open" role="status" aria-live="polite">
+  <p><span id="typed"></span><span class="caret"></span></p>
+  <button id="skip" type="button">Skip</button>
+</div>
+
+<nav>
+  <div class="wrap">
+    <b>HR</b>
+    <a href="#about"><span>02</span>About</a>
+    <a href="#skills"><span>03</span>Skills</a>
+    <a href="#journey"><span>04</span>Journey</a>
+    <a href="#beyond"><span>05</span>Beyond</a>
+    <a href="#contact"><span>06</span>Contact</a>
+  </div>
+</nav>
+
+<main>
+<!-- GATE 01 · LANDING -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="ticket pass">
+      <div class="pass-main">
+        <div class="pass-top"><span>BOARDING PASS</span><i>YEAR 01</i></div>
+        <span class="label">Passenger</span>
+        <h1 class="name"><span>Harish</span><span>Raajan</span></h1>
+        <!-- EDIT: tagline in your own words -->
+        <p class="tagline">First-year IT student, learning to build things that work, and look like someone cared.</p>
+        <!-- EDIT: currently line -->
+        <p class="now"><b>Currently</b><span>learning web basics and hand-building this site.</span></p>
+        <div class="btns">
+          <a class="btn" href="#about">Explore</a>
+          <a class="btn alt" href="#contact">Say hi</a>
+        </div>
+      </div>
+      <div class="pass-stub">
+        <button class="mono-btn" id="mono" type="button" aria-label="Monogram HR">
+          <svg viewBox="0 0 200 200" aria-hidden="true">
+            <defs><path id="ring" d="M100,100 m-72,0 a72,72 0 1,1 144,0 a72,72 0 1,1 -144,0"/></defs>
+            <circle cx="100" cy="100" r="94" fill="none" stroke="#cf4529" stroke-width="4"/>
+            <circle cx="100" cy="100" r="52" fill="none" stroke="#cf4529" stroke-width="2"/>
+            <text font-family="Courier Prime,monospace" font-size="15" letter-spacing="4.2" fill="#cf4529" font-weight="700"><textPath href="#ring">B.TECH IT · FIRST YEAR · CLEARED FOR TAKEOFF ·</textPath></text>
+            <text x="100" y="126" text-anchor="middle" font-family="Bebas Neue,Impact,sans-serif" font-size="78" fill="#1e2b26" letter-spacing="2">HR</text>
+          </svg>
+        </button>
+        <div class="fields">
+          <div><span class="label">Gate</span>01</div>
+          <div><span class="label">Seat</span>1A</div>
+          <div><span class="label">Course</span>B.Tech IT</div>
+          <div><span class="label">Status</span>Boarding</div>
+        </div>
+        <div class="barcode" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- GATE 02 · ABOUT -->
+<section id="about"><div class="wrap">
+  <div class="sec-head"><h2 class="rv">About</h2><span class="stamp rv">Gate 02</span></div>
+  <div class="about">
+    <div class="rv">
+      <!-- EDIT: replace with your own story from your Me-Map -->
+      <p>I'm Harish, a first-year B.Tech IT student, and almost everything I'm doing right now is a first: first semester, first real code, first website I've designed myself instead of filling in a template.</p>
+      <p>I'm at the stage where a small thing finally working still feels huge, and I'm trying to keep that feeling instead of rushing past it. I like knowing why something works before I move on to the next thing.</p>
+      <p>This site is my departure lounge. It's where I keep track of where I've been, where I am, and which gate I'm walking toward next.</p>
+    </div>
+    <aside class="ticket passport rv" aria-label="Quick facts">
+      <span class="label">Passport · Quick facts</span>
+      <dl>
+        <div><dt>Studying</dt><dd>B.Tech Information Technology</dd></div>
+        <div><dt>Year</dt><dd>First</dd></div>
+        <div><dt>Travelling light with</dt><dd>Curiosity, a laptop</dd></div>
+      </dl>
+    </aside>
+  </div>
+</div></section>
+
+<!-- GATE 03 · SKILLS -->
+<section id="skills"><div class="wrap">
+  <div class="sec-head"><h2 class="rv">Skills</h2><span class="stamp rv">Gate 03</span></div>
+  <div class="board rv">
+    <header><span>Skill</span><span>Status</span></header>
+    <!-- EDIT: be honest. c = comfortable, l = learning, j = just started -->
+    <div class="row c"><span>HTML</span><small>Comfortable</small></div>
+    <div class="row c"><span>CSS</span><small>Comfortable</small></div>
+    <div class="row l"><span>JavaScript</span><small>Learning</small></div>
+    <div class="row l"><span>Python</span><small>Learning</small></div>
+    <div class="row j"><span>Git</span><small>Just started</small></div>
+  </div>
+  <p class="note rv">No percentages here. "Comfortable" means I can build with it without looking everything up; "Learning" means I still get delayed at the gate.</p>
+</div></section>
+
+<!-- GATE 04 · JOURNEY -->
+<section id="journey"><div class="wrap">
+  <div class="sec-head"><h2 class="rv">Journey</h2><span class="stamp rv">Gate 04</span></div>
+  <div class="legs">
+    <article class="ticket leg a rv">
+      <div class="tag"><span>Leg 1</span><span>Departed</span></div>
+      <h3>What I've made</h3>
+      <!-- EDIT: list your real projects -->
+      <p>This portfolio, plus the small programs and lab exercises of a first semester. Each one taught me something the lecture didn't.</p>
+      <div class="route"></div>
+    </article>
+    <article class="ticket leg b rv">
+      <div class="tag"><span>Leg 2</span><span>In flight</span></div>
+      <h3>What I'm learning</h3>
+      <p>Programming fundamentals, web basics, and how computers actually work underneath the screen.</p>
+      <div class="route"></div>
+    </article>
+    <article class="ticket leg c rv">
+      <div class="tag"><span>Leg 3</span><span>Boarding soon</span></div>
+      <h3>What I want to build</h3>
+      <p>Something real that other students use. I don't know exactly what yet, which is the exciting part.</p>
+      <div class="route"></div>
+    </article>
+  </div>
+</div></section>
+
+<!-- GATE 05 · BEYOND CODE (signature: flip cards) -->
+<section id="beyond"><div class="wrap">
+  <div class="sec-head"><h2 class="rv">Beyond code</h2><span class="stamp rv">Gate 05</span></div>
+  <p class="note rv" style="margin:-14px 0 26px">Tap a ticket to flip it.</p>
+  <div class="cards">
+    <!-- EDIT: swap in your real hobbies and fun facts -->
+    <button class="fc rv" type="button" aria-pressed="false"><span class="in2">
+      <span class="face"><span class="label"><span>Card 01</span><span>Flip</span></span><h3>Window or aisle?</h3><span class="barcode" style="height:22px"></span></span>
+      <span class="face back"><span class="label"><span>Fun fact</span></span><p>Window. I'd rather watch the world get small than get up for snacks.</p><span class="stamp" style="font-size:1rem">Verified</span></span>
+    </span></button>
+    <button class="fc rv" type="button" aria-pressed="false"><span class="in2">
+      <span class="face"><span class="label"><span>Card 02</span><span>Flip</span></span><h3>On repeat</h3><span class="barcode" style="height:22px"></span></span>
+      <span class="face back"><span class="label"><span>Fun fact</span></span><p>Add your favourite song or artist here, and why it never gets old.</p><span class="stamp" style="font-size:1rem">Verified</span></span>
+    </span></button>
+    <button class="fc rv" type="button" aria-pressed="false"><span class="in2">
+      <span class="face"><span class="label"><span>Card 03</span><span>Flip</span></span><h3>Off the clock</h3><span class="barcode" style="height:22px"></span></span>
+      <span class="face back"><span class="label"><span>Fun fact</span></span><p>Add what you do when there's no screen involved: a sport, a walk, anything.</p><span class="stamp" style="font-size:1rem">Verified</span></span>
+    </span></button>
+    <button class="fc rv" type="button" aria-pressed="false"><span class="in2">
+      <span class="face"><span class="label"><span>Card 04</span><span>Flip</span></span><h3>Next destination</h3><span class="barcode" style="height:22px"></span></span>
+      <span class="face back"><span class="label"><span>Fun fact</span></span><p>Add a place you want to visit someday. Boarding passes are better with a destination.</p><span class="stamp" style="font-size:1rem">Verified</span></span>
+    </span></button>
+  </div>
+</div></section>
+
+<!-- GATE 06 · CONTACT -->
+<section id="contact"><div class="wrap">
+  <div class="sec-head"><h2 class="rv">Contact</h2><span class="stamp rv">Gate 06</span></div>
+  <div class="ticket desk rv">
+    <div>
+      <span class="label">Check-in desk</span>
+      <h3>Let's<br>talk.</h3>
+    </div>
+    <div class="links">
+      <!-- EDIT: put your real links -->
+      <a href="mailto:your.email@example.com">Email <span>your.email@example.com</span></a>
+      <a href="https://www.linkedin.com/in/your-handle" target="_blank" rel="noopener">LinkedIn <span>/in/your-handle</span></a>
+      <a href="https://github.com/your-handle" target="_blank" rel="noopener">GitHub <span>/your-handle</span></a>
+    </div>
+  </div>
+</div></section>
+</main>
+
+<footer>Harish Raajan · Year 01 · Thanks for flying with me</footer>
+
+<div id="egg" aria-hidden="true"><div class="stamp">Upgraded to<br>first class<small>Enjoy the extra legroom, Harish.</small></div></div>
+
+<script>
+(function(){
+  var rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var open = document.getElementById('open');
+  var typed = document.getElementById('typed');
+  var text = 'Now boarding: Harish Raajan.';
+  var seen = false;
+  try { seen = sessionStorage.getItem('hr-intro') === '1'; } catch(e){}
+  var timers = [];
+  function finish(){
+    if(!open) return;
+    timers.forEach(clearTimeout);
+    try { sessionStorage.setItem('hr-intro','1'); } catch(e){}
+    open.classList.add('out');
+    var o = open; open = null;
+    setTimeout(function(){ o.remove(); }, 520);
+  }
+  if(rm || seen){ open.remove(); open = null; }
+  else {
+    document.getElementById('skip').addEventListener('click', finish);
+    var i = 0;
+    (function tick(){
+      typed.textContent = text.slice(0, ++i);
+      if(i < text.length) timers.push(setTimeout(tick, 38));
+      else timers.push(setTimeout(finish, 380));
+    })();
+  }
+
+  /* reveal on scroll */
+  var els = document.querySelectorAll('.rv');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, {threshold:.15});
+    els.forEach(function(el, n){ el.style.transitionDelay = (n % 3) * 70 + 'ms'; io.observe(el); });
+  } else { els.forEach(function(el){ el.classList.add('in'); }); }
+
+  /* flip cards */
+  document.querySelectorAll('.fc').forEach(function(c){
+    c.addEventListener('click', function(){
+      c.setAttribute('aria-pressed', c.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+    });
+  });
+
+  /* easter egg: tap the monogram three times */
+  var taps = 0, tt, egg = document.getElementById('egg');
+  document.getElementById('mono').addEventListener('click', function(){
+    taps++; clearTimeout(tt); tt = setTimeout(function(){ taps = 0; }, 900);
+    if(taps >= 3){
+      taps = 0; egg.classList.remove('go'); void egg.offsetWidth; egg.classList.add('go');
+      if(rm){ egg.style.opacity = 1; setTimeout(function(){ egg.style.opacity = 0; }, 2000); }
+    }
+  });
+})();
+</script>
+</body>
+</html>
